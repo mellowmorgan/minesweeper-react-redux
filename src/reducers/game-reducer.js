@@ -1,9 +1,9 @@
-export default (state, action) => {
+export default (state = {}, action) => {
   const { w, h, mineCount, lost, won, minesPlaced} = action; //id is coords "X-Y"
   
   switch (action.type) {
   case 'START_GAME': //preset grid size 16x16 mineCount 40
-    return Object.assign({}, {
+    return Object.assign({}, state, {
         w: w,
         h: h,
         mineCount:mineCount,
