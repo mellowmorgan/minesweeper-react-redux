@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 function Cell(props){
   return(
     <React.Fragment>
-      <p>{props.cell.x}-{props.cell.y}</p>
+      <p></p>
     </React.Fragment>
   );
 }

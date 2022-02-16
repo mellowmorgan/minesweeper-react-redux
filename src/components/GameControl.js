@@ -30,8 +30,7 @@ class GameControl extends React.Component{
     return(
     
       <React.Fragment>
-        <div>hello</div>
-        {currentBoard};
+        {currentBoard}
         {/* <NewGameForm /> */}
       </React.Fragment>
 
