@@ -1,5 +1,5 @@
 export default (state = {}, action) => {
-  const { w, h, mineCount, lost, won, minesPlaced} = action; //id is coords "X-Y"
+  const { w, h, mineCount, lost, won, minesPlaced,x,y} = action; //id is coords "X-Y"
   
   switch (action.type) {
   case 'START_GAME': //preset grid size 16x16 mineCount 40
@@ -20,7 +20,11 @@ export default (state = {}, action) => {
           };
         }))
     });
-  // case 'CHOOSE_CELL':
+  case 'TOGGLE_FLAG':
+    let selectedCell = state.grid[y][x];
+    selectedCell.flagged = !selectedCell.flagged;
+    state.grid[y][x] = selectedCell;    
+    return state;
   // case 'GAME_OVER':
   default:
     return state;

@@ -1,4 +1,7 @@
 import gameReducer from "../../reducers/game-reducer";
+import { createStore } from 'redux';
+
+let store = createStore(gameReducer);
 
 describe('gameReducer', () => {
   let action;
@@ -27,6 +30,26 @@ describe('gameReducer', () => {
       }))
     })
   })
+
+  test("Should toggle flag on and off for specific cell", () => {
+    const startGameAction = {
+      type: 'START_GAME',
+      w: 16,
+      h:16,
+      mineCount:40
+    };
+
+    const toggleAction = {
+      type: 'TOGGLE_FLAG',
+      x: 2,
+      y: 3
+    };
+    store.dispatch(startGameAction);
+    store.dispatch(toggleAction);
+    expect(store.getState().grid[3][2].flagged).toEqual(true);
+    store.dispatch(toggleAction);
+    expect(store.getState().grid[3][2].flagged).toEqual(false);
+  });
 });
 
 function range(num) {

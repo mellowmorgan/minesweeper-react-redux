@@ -17,28 +17,22 @@ function getGridStyle(length) {
   );
 }
 
-const cellStyle = {
-  background: "#c0c0c0",
-  borderLeft: "1px solid #FFF",
-  borderTop: "1px solid #FFF",
-  borderRight: "1px solid #6e6e6e",
-  borderBottom: "1px solid #6e6e6e",
-  width: "25px",
-  height: "25px"
-};
+
 
 function Grid(props){
+
   return(
     <React.Fragment>
       <div style={getGridStyle(props.grid.length)}>
         {props.grid.map((row) => {
-          return row.map((cell)=> {return <div style={cellStyle}><Cell cell={cell} /> </div>});
+          return row.map((cell)=> {return <Cell rightClickHandler={props.rightClickHandler} cell={cell} />});
         })}
       </div>
     </React.Fragment>
   );
 }
 Grid.propTypes = {
-  grid: PropTypes.array
+  grid: PropTypes.array,
+  rightClickHandler: PropTypes.func
 }
 export default Grid;
