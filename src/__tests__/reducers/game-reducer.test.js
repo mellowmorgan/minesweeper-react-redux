@@ -50,6 +50,14 @@ describe('gameReducer', () => {
     store.dispatch(toggleAction);
     expect(store.getState().grid[3][2].flagged).toEqual(false);
   });
+  test("Should return array of mines arrays", () => {
+    const arr = placeMines([8,2],40,16,16)
+    expect(arr.length).toEqual(40);
+    expect(arr[0].length).toEqual(2);
+    expect(typeof(arr)).toEqual("object");
+    expect(arr.includes([8,2])).toEqual(false);
+
+  });
 });
 
 function range(num) {
@@ -58,4 +66,16 @@ function range(num) {
     arr.push(i);
   }
   return arr;
+}
+function placeMines(cellToIgnore, mineCount, w, h) {
+  let mineArray = []
+  do {
+    let x = Math.floor(Math.random()* h);
+    let y = Math.floor(Math.random()* w);
+      if ([y, x] != cellToIgnore && !mineArray.includes([y, x])) {
+        mineArray.push([y, x]);
+      }
+
+  } while (mineArray.length < mineCount);
+  return mineArray; // [[1, 4], [2, 5]]
 }

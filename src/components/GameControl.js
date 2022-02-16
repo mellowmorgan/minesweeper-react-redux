@@ -19,6 +19,41 @@ class GameControl extends React.Component{
     }
     dispatch(action);
   }
+  leftClickHandler = (cellClicked) => {
+    const { dispatch } = this.props;
+    // e.preventDefault();
+    //alert("right click works")
+    if (!this.props.gameState.minesPlaced){
+      const action = {
+        type: 'PLACE_MINES',
+        cellToIgnore: cellClicked,
+        mineCount: this.props.gameState.mineCount,
+        w:this.props.gameState.w,
+        h:this.props.gameState.h
+      }
+      dispatch(action);
+      
+    }
+    else{
+      if (cellClicked.mine){
+
+        //change state with action dispatch
+        this.props.gameState.minesPlacedArray.forEach((cellId)=>{
+          document.getElementById(cellId).style.backgroundImage = "url('http://old.no/icon/entertainment/mini-mine.gif')";
+          document.getElementById(cellId).style.backgroundColor = "red";
+          document.getElementById(cellId).style.backgroundRepeat="no-repeat";
+          document.getElementById(cellId).style.backgroundPosition="center";
+          document.getElementById(cellId).style.backgroundSize="70% 70%";
+        })
+
+        
+
+      }
+
+    }
+  
+    
+  }
   rightClickHandler = (x, y, cellId) => {
     const { dispatch } = this.props;
     // e.preventDefault();
@@ -34,7 +69,6 @@ class GameControl extends React.Component{
       document.getElementById(cellId).style.removeProperty("background-image");
       document.getElementById(cellId).style.removeProperty("background-repeat");
       document.getElementById(cellId).style.removeProperty("background-position");
-      document.getElementById(cellId).style.removePropery("background-size");
     }
     else{
       document.getElementById(cellId).style.backgroundImage = "url('https://dougx.net/sweeper/flag.png')";
@@ -48,7 +82,7 @@ class GameControl extends React.Component{
   render(){
     let currentBoard;
     if (this.props.gameState.grid !== undefined){
-      currentBoard = <Board rightClickHandler={this.rightClickHandler} grid={this.props.gameState.grid} mineCount={this.props.gameState.mineCount}/>
+      currentBoard = <Board leftClickHandler={this.leftClickHandler} rightClickHandler={this.rightClickHandler} grid={this.props.gameState.grid} mineCount={this.props.gameState.mineCount}/>
     }else{
       currentBoard=<div>empty</div>
     }

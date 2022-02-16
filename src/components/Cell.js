@@ -28,14 +28,15 @@ function getStyle(isFlagged) {
 function Cell(props){      
   return(
     <React.Fragment>
-      <div id={props.cell.id} onContextMenu={(e) => (e.preventDefault(), props.rightClickHandler(props.cell.x, props.cell.y, props.cell.id))} style={getStyle(props.cell.flagged)}></div>
+      <div id={props.cell.id} onClick={() => props.leftClickHandler(props.cell)} onContextMenu={(e) => (e.preventDefault(), props.rightClickHandler(props.cell.x, props.cell.y, props.cell.id))} style={getStyle(props.cell.flagged)}></div>
     </React.Fragment>
   );
 }
 
 Cell.propTypes = {
   cell: PropTypes.object,
-  rightClickHandler: PropTypes.func
+  rightClickHandler: PropTypes.func,
+  leftClickHandler: PropTypes.func
 }
 
 export default Cell;
