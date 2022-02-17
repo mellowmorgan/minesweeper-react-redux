@@ -71,29 +71,18 @@ export default (state = {}, action) => {
 
   });
   case 'CELL_CLICKED':
-    // let clickedCell = state.grid[y][x];
-    // clickedCell.revealed = true;
-    // state.grid[y][x] = clickedCell;
     const newState = clickHelper(state, x, y);
-    return Object.assign({}, state, newState);
-  // case 'REFRESH_GAME':
-  //   return Object.assign({}, state, {
-  //     lost:false,
-  //     won:false,
-  //     mineCount: mineCount,
-  //     w: w,
-  //     h:h,
-  //     minesPlaced: false,
-  //     grid: range(h).map((y) => range(w).map((x) => { 
-  //       return {
-  //         id: `cell-${x}-${y}`,
-  //         x, y,
-  //         flagged: false,
-  //         mine: false,
-  //         revealed: false
-  //       };
-  //     }))
-  //   })
+    if (gameWon(newState, x,y)){   
+      console.log("win hit")
+      return Object.assign({}, state, {
+        
+        ...newState,
+        won: true
+      });
+    }else{
+      return Object.assign({}, state, newState);    
+    }
+
   case 'GAME_OVER':
     return Object.assign({}, state, {
       lost:true
@@ -167,7 +156,7 @@ function placeMines(cellToIgnore, mineCount, w, h) {
   do {
     let x = Math.floor(Math.random()* h);
     let y = Math.floor(Math.random()* w);
-      if (`cell-${x}-${y}` !== cellToIgnore.id && !mineArray.includes([y, x])) {
+      if (`cell-${x}-${y}` !== cellToIgnore.id && !mineArray.includes(`cell-${x}-${y}`)) {
         // mineArray.push([y, x]);
         mineArray.push(`cell-${x}-${y}`);
       }
@@ -175,6 +164,17 @@ function placeMines(cellToIgnore, mineCount, w, h) {
   } while (mineArray.length < mineCount);
   return mineArray; 
 }
+function gameWon(fedState){
+  for(let i=0;i<fedState.h;i++){
+    for(let j=0;j<fedState.w;j++){
+      if ((!fedState.grid[i][j].revealed) && !(fedState.minesPlacedArray.includes(fedState.grid[i][j].id) )){
+        return false;
+      }
+    }
+  }
+  return true;
+}   
+  
 
 function range(num) {
   let arr = [];

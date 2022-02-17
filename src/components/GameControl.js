@@ -102,9 +102,9 @@ class GameControl extends React.Component{
     const { dispatch } = this.props;
     const action = {
       type: 'START_GAME',
-      w: newGame.w,
-      h: newGame.h,
-      mineCount:newGame.mines
+      w: parseInt(newGame.w),
+      h: parseInt(newGame.h),
+      mineCount: parseInt(newGame.mines)
     }
     dispatch(action);
   }
