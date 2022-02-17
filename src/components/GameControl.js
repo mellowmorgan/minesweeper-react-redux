@@ -1,6 +1,6 @@
 import React from 'react';
 import Board from './Board';
-//import NewGameForm from './NewGameForm'
+import NewGameForm from './NewGameForm'
 import PropTypes from "prop-types";
 import { connect } from 'react-redux';
 const flagStyle = {
@@ -98,7 +98,16 @@ class GameControl extends React.Component{
     // }
     
   }
-
+  handleNewGame = (newGame)  =>{
+    const { dispatch } = this.props;
+    const action = {
+      type: 'START_GAME',
+      w: newGame.w,
+      h: newGame.h,
+      mineCount:newGame.mines
+    }
+    dispatch(action);
+  }
   render(){
     
     let currentBoard;
@@ -126,6 +135,8 @@ class GameControl extends React.Component{
           grid={this.props.gameState.grid} 
           mineCount={this.props.gameState.mineCount}
           gameOver={this.props.gameState.lost}
+          
+
         />)
     }else{
       currentBoard=<div>empty</div>
@@ -135,7 +146,7 @@ class GameControl extends React.Component{
     
       <React.Fragment>
         {currentBoard}
-        {/* <NewGameForm /> */}
+        <NewGameForm onNewGameCreation={this.handleNewGame} />
       </React.Fragment>
 
     );
