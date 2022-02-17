@@ -34,7 +34,6 @@ const flagStyle = {
 
 function getStyle(cell, gameOver) {
   if (cell.flagged) {
-    console.log("true");
     return {...cellStyle, ...flagStyle};
   } 
   else if (cell.mine && (cell.revealed || gameOver)) {
@@ -47,10 +46,13 @@ function getStyle(cell, gameOver) {
   }
 }
 
-function Cell(props){      
+function Cell(props){  
+ 
+
+  
   return(
     <React.Fragment>
-      <div className="cell" id={props.cell.id} onClick={() => props.leftClickHandler(props.cell)} onContextMenu={(e) => (e.preventDefault(), props.rightClickHandler(props.cell.x, props.cell.y, props.cell.id))} style={getStyle(props.cell, props.gameOver)}>{props.cell.revealed && props.cell.number>0 ? props.cell.number : ""}</div>
+      <div className="cell" id={props.cell.id} onClick={() => props.leftClickHandler(props.cell) } onContextMenu={(e) => (e.preventDefault(), props.rightClickHandler(props.cell.x, props.cell.y, props.cell.id))} style={getStyle(props.cell, props.gameOver)}>{props.cell.revealed && props.cell.number>0 ? props.cell.number : ""}</div>
     </React.Fragment>
   );
 }
@@ -60,7 +62,8 @@ Cell.propTypes = {
   cell: PropTypes.object,
   rightClickHandler: PropTypes.func,
   leftClickHandler: PropTypes.func,
-  gameOver: PropTypes.bool
+  gameOver: PropTypes.bool,
+  disabled: PropTypes.bool
 }
 
 export default Cell;

@@ -23,7 +23,7 @@ function Grid(props){
 
   return(
     <React.Fragment>
-      <div style={getGridStyle(props.grid.length)}>
+      <div disabled={props.disabled}  style={getGridStyle(props.grid.length)}>
         {props.grid.map((row) => {
           return row.map((cell)=> {return <Cell gameOver={props.gameOver} leftClickHandler={props.leftClickHandler} rightClickHandler={props.rightClickHandler}  cell={cell} />});
         })}
@@ -36,7 +36,7 @@ Grid.propTypes = {
   grid: PropTypes.array,
   rightClickHandler: PropTypes.func,
   leftClickHandler: PropTypes.func,
-  
+  disabled: PropTypes.bool,
 
 }
 export default Grid;

@@ -36,41 +36,45 @@ class GameControl extends React.Component{
 
   leftClickHandler = (cellClicked) => {
     const { dispatch } = this.props;
-    if (!this.props.gameState.minesPlaced && (!cellClicked.flagged)){
-      const action = {
-        type: 'PLACE_MINES',
-        cellToIgnore: cellClicked,
-        mineCount: this.props.gameState.mineCount,
-        w:this.props.gameState.w,
-        h:this.props.gameState.h
-      }
-      dispatch(action);
-      if(!cellClicked.flagged){
-      const action2 = {
-        type: 'CELL_CLICKED',
-        x: cellClicked.x,
-        y: cellClicked.y
-      }
-      dispatch(action2);
+    if(!this.props.gameState.won && !this.props.gameState.lost){
 
-    }}
-    else{
-      if (cellClicked.mine){
-
+      if (!this.props.gameState.minesPlaced && (!cellClicked.flagged)){
         const action = {
-        type: 'GAME_OVER'
-      }
-      dispatch(action);
-      }
-      else if (!cellClicked.flagged){
-      const action = {
-        type: 'CELL_CLICKED',
-        x: cellClicked.x,
-        y: cellClicked.y
-      }
-      dispatch(action);
+          type: 'PLACE_MINES',
+          cellToIgnore: cellClicked,
+          mineCount: this.props.gameState.mineCount,
+          w:this.props.gameState.w,
+          h:this.props.gameState.h
+        }
+        dispatch(action);
+        if(!cellClicked.flagged){
+        const action2 = {
+          type: 'CELL_CLICKED',
+          x: cellClicked.x,
+          y: cellClicked.y
+        }
+        dispatch(action2);
+      }}
+      else{
+        if (cellClicked.mine){
+  
+          const action = {
+          type: 'GAME_OVER'
+        }
+        dispatch(action);
+        }
+        else if (!cellClicked.flagged){
+        const action = {
+          type: 'CELL_CLICKED',
+          x: cellClicked.x,
+          y: cellClicked.y
+        }
+        dispatch(action);
+        }
       }
     }
+   
+    
   }
   
   rightClickHandler = (x, y, cellId) => {
@@ -109,15 +113,18 @@ class GameControl extends React.Component{
     dispatch(action);
   }
   render(){
-    
+    let disabled = false;
+
     let currentBoard;
     let display;
     
     if (this.props.gameState.lost){
       display = "You R A Loser"
+      disabled = true;
     }
     else if(this.props.gameState.won){
       display = "You R A Winner"
+      disabled = true;
     }
     else{
      display = "Reset";
@@ -129,7 +136,7 @@ class GameControl extends React.Component{
           refresh={this.refreshHandler} 
           display={display} 
           flagsCount={this.props.gameState.flagsCount}
-          disabled={this.props.gameState.lost} 
+          disabled={disabled}
           leftClickHandler={this.leftClickHandler} 
           rightClickHandler={this.rightClickHandler} 
           grid={this.props.gameState.grid} 

@@ -17,7 +17,7 @@ function Board(props){
         <div id="mine-count">{props.mineCount - props.flagsCount}</div>
         <div onClick={props.refresh} id="state-display" style={refreshStyle}>{props.display}</div>
       </div>
-      <Grid gameOver={props.gameOver} leftClickHandler={props.leftClickHandler} rightClickHandler={props.rightClickHandler} grid={props.grid} />
+      <Grid disabled={props.disabled}  gameOver={props.gameOver} leftClickHandler={props.leftClickHandler} rightClickHandler={props.rightClickHandler} grid={props.grid} />
     </React.Fragment>
   );
 }
@@ -30,6 +30,7 @@ Board.propTypes = {
   leftClickHandler: PropTypes.func,
   display: PropTypes.string,
   refresh: PropTypes.func,
+  disabled: PropTypes.bool,
   flagsCount: PropTypes.number
   
 }
