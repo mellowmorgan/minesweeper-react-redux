@@ -34,6 +34,7 @@ function Grid(props){
 Grid.propTypes = {
   grid: PropTypes.array,
   rightClickHandler: PropTypes.func,
-  leftClickHandler: PropTypes.func
+  leftClickHandler: PropTypes.func,
+
 }
 export default Grid;

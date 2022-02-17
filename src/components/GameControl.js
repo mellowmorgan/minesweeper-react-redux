@@ -7,6 +7,8 @@ const flagStyle = {
   //backgroundImage: "url('https://dougx.net/sweeper/flag.png')"
 };
 //handClickCell for cells will live here and be passed down as props function
+
+
 class GameControl extends React.Component{
   constructor(props) {
     super(props);
@@ -19,6 +21,25 @@ class GameControl extends React.Component{
     }
     dispatch(action);
   }
+  clearGrid = () => {
+   
+    // document.getElementsByClassName("cell").removeAttribute("style","background-image");
+    // document.getElementsByClassName("cell").style.removeProperty("background-repeat");
+    // document.getElementsByClassName("cell").style.removeProperty("background-position");
+    // document.getElementsByClassName("cell").style.removeProperty("background-color");
+  }
+  refreshHandler = () => {
+    const { dispatch } = this.props;
+    const action = {
+      type: 'REFRESH_GAME',
+      w: this.props.gameState.w,
+      h: this.props.gameState.h,
+      mineCount:this.props.gameState.mineCount
+    }
+    dispatch(action);
+    this.clearGrid(); 
+  }
+
   leftClickHandler = (cellClicked) => {
     const { dispatch } = this.props;
     // e.preventDefault();
@@ -32,12 +53,17 @@ class GameControl extends React.Component{
         h:this.props.gameState.h
       }
       dispatch(action);
-      
+      const action2 = {
+        type: 'CELL_CLICKED'
+      }
+      dispatch(action2);
+      document.getElementById(cellClicked.id).style.backgroundColor="darkgray";
+      document.getElementById(cellClicked.id).textContent=cellClicked.number;
+      alert(cellClicked.number)
+
     }
     else{
       if (cellClicked.mine){
-
-        //change state with action dispatch
         this.props.gameState.minesPlacedArray.forEach((cellId)=>{
           document.getElementById(cellId).style.backgroundImage = "url('http://old.no/icon/entertainment/mini-mine.gif')";
           document.getElementById(cellId).style.backgroundColor = "red";
@@ -46,14 +72,23 @@ class GameControl extends React.Component{
           document.getElementById(cellId).style.backgroundSize="70% 70%";
         })
 
-        
+        const action = {
+        type: 'GAME_OVER'
+      }
+      dispatch(action);
+      }
+      else{
+      const action = {
+        type: 'CELL_CLICKED'
+      }
+      dispatch(action);
+      document.getElementById(cellClicked.id).style.backgroundColor="darkgray";
+      document.getElementById(cellClicked.id).textContent=cellClicked.number;
 
       }
-
     }
-  
-    
   }
+  
   rightClickHandler = (x, y, cellId) => {
     const { dispatch } = this.props;
     // e.preventDefault();
@@ -81,8 +116,21 @@ class GameControl extends React.Component{
 
   render(){
     let currentBoard;
+    let display;
+    
+    if (this.props.gameState.lost){
+      display = "You R A Loser"
+    }
+    else if(this.props.gameState.won){
+      display = "You R A Winner"
+    }
+    else{
+     display = "Reset";
+    }
+
     if (this.props.gameState.grid !== undefined){
-      currentBoard = <Board leftClickHandler={this.leftClickHandler} rightClickHandler={this.rightClickHandler} grid={this.props.gameState.grid} mineCount={this.props.gameState.mineCount}/>
+      
+      currentBoard = <Board refresh={this.refreshHandler} display={display} disabled={this.props.gameState.lost} leftClickHandler={this.leftClickHandler} rightClickHandler={this.rightClickHandler} grid={this.props.gameState.grid} mineCount={this.props.gameState.mineCount}/>
     }else{
       currentBoard=<div>empty</div>
     }

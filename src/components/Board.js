@@ -10,7 +10,7 @@ function Board(props){
    
       <div>
         <div id="mine-count">{props.mineCount}</div>
-        <div id="state-display">Reset</div>
+        <div onClick={props.refresh} id="state-display">{props.display}</div>
       </div>
       <Grid leftClickHandler={props.leftClickHandler} rightClickHandler={props.rightClickHandler} grid={props.grid} />
     </React.Fragment>
@@ -21,6 +21,9 @@ Board.propTypes = {
   grid: PropTypes.array,
   mineCount: PropTypes.number,
   rightClickHandler: PropTypes.func,
-  leftClickHandler: PropTypes.func
+  leftClickHandler: PropTypes.func,
+  display: PropTypes.string,
+  refresh: PropTypes.func,
+  
 }
 export default Board;
