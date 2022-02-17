@@ -10,6 +10,7 @@ const flagStyle = {
 
 
 class GameControl extends React.Component{
+
   constructor(props) {
     super(props);
     const { dispatch } = this.props;
@@ -20,31 +21,22 @@ class GameControl extends React.Component{
       mineCount:40
     }
     dispatch(action);
-  }
-  clearGrid = () => {
-   
-    // document.getElementsByClassName("cell").removeAttribute("style","background-image");
-    // document.getElementsByClassName("cell").style.removeProperty("background-repeat");
-    // document.getElementsByClassName("cell").style.removeProperty("background-position");
-    // document.getElementsByClassName("cell").style.removeProperty("background-color");
-  }
+  } 
+  
   refreshHandler = () => {
     const { dispatch } = this.props;
     const action = {
-      type: 'REFRESH_GAME',
+      type: 'START_GAME',
       w: this.props.gameState.w,
       h: this.props.gameState.h,
       mineCount:this.props.gameState.mineCount
     }
     dispatch(action);
-    this.clearGrid(); 
   }
 
   leftClickHandler = (cellClicked) => {
     const { dispatch } = this.props;
-    // e.preventDefault();
-    //alert("right click works")
-    if (!this.props.gameState.minesPlaced){
+    if (!this.props.gameState.minesPlaced && (!cellClicked.flagged)){
       const action = {
         type: 'PLACE_MINES',
         cellToIgnore: cellClicked,
@@ -53,38 +45,30 @@ class GameControl extends React.Component{
         h:this.props.gameState.h
       }
       dispatch(action);
+      if(!cellClicked.flagged){
       const action2 = {
-        type: 'CELL_CLICKED'
+        type: 'CELL_CLICKED',
+        x: cellClicked.x,
+        y: cellClicked.y
       }
       dispatch(action2);
-      document.getElementById(cellClicked.id).style.backgroundColor="darkgray";
-      document.getElementById(cellClicked.id).textContent=cellClicked.number;
-      alert(cellClicked.number)
 
-    }
+    }}
     else{
       if (cellClicked.mine){
-        this.props.gameState.minesPlacedArray.forEach((cellId)=>{
-          document.getElementById(cellId).style.backgroundImage = "url('http://old.no/icon/entertainment/mini-mine.gif')";
-          document.getElementById(cellId).style.backgroundColor = "red";
-          document.getElementById(cellId).style.backgroundRepeat="no-repeat";
-          document.getElementById(cellId).style.backgroundPosition="center";
-          document.getElementById(cellId).style.backgroundSize="70% 70%";
-        })
 
         const action = {
         type: 'GAME_OVER'
       }
       dispatch(action);
       }
-      else{
+      else if (!cellClicked.flagged){
       const action = {
-        type: 'CELL_CLICKED'
+        type: 'CELL_CLICKED',
+        x: cellClicked.x,
+        y: cellClicked.y
       }
       dispatch(action);
-      document.getElementById(cellClicked.id).style.backgroundColor="darkgray";
-      document.getElementById(cellClicked.id).textContent=cellClicked.number;
-
       }
     }
   }
@@ -93,6 +77,7 @@ class GameControl extends React.Component{
     const { dispatch } = this.props;
     // e.preventDefault();
     //alert("right click works")
+    
     const action = {
       type: 'TOGGLE_FLAG',
       x: x,
@@ -100,21 +85,22 @@ class GameControl extends React.Component{
     }
     dispatch(action);
     
-    if (!this.props.gameState.grid[y][x].flagged){
-      document.getElementById(cellId).style.removeProperty("background-image");
-      document.getElementById(cellId).style.removeProperty("background-repeat");
-      document.getElementById(cellId).style.removeProperty("background-position");
-    }
-    else{
-      document.getElementById(cellId).style.backgroundImage = "url('https://dougx.net/sweeper/flag.png')";
-      document.getElementById(cellId).style.backgroundRepeat="no-repeat";
-      document.getElementById(cellId).style.backgroundPosition="center";
-      document.getElementById(cellId).style.backgroundSize="70% 70%";
-    }
+    // if (!this.props.gameState.grid[y][x].flagged){
+    //   document.getElementById(cellId).style.removeProperty("background-image");
+    //   document.getElementById(cellId).style.removeProperty("background-repeat");
+    //   document.getElementById(cellId).style.removeProperty("background-position");
+    // }
+    // else{
+    //   document.getElementById(cellId).style.backgroundImage = "url('https://dougx.net/sweeper/flag.png')";
+    //   document.getElementById(cellId).style.backgroundRepeat="no-repeat";
+    //   document.getElementById(cellId).style.backgroundPosition="center";
+    //   document.getElementById(cellId).style.backgroundSize="70% 70%";
+    // }
     
   }
 
   render(){
+    
     let currentBoard;
     let display;
     
@@ -129,8 +115,18 @@ class GameControl extends React.Component{
     }
 
     if (this.props.gameState.grid !== undefined){
-      
-      currentBoard = <Board refresh={this.refreshHandler} display={display} disabled={this.props.gameState.lost} leftClickHandler={this.leftClickHandler} rightClickHandler={this.rightClickHandler} grid={this.props.gameState.grid} mineCount={this.props.gameState.mineCount}/>
+      currentBoard = (
+        <Board 
+          refresh={this.refreshHandler} 
+          display={display} 
+          flagsCount={this.props.gameState.flagsCount}
+          disabled={this.props.gameState.lost} 
+          leftClickHandler={this.leftClickHandler} 
+          rightClickHandler={this.rightClickHandler} 
+          grid={this.props.gameState.grid} 
+          mineCount={this.props.gameState.mineCount}
+          gameOver={this.props.gameState.lost}
+        />)
     }else{
       currentBoard=<div>empty</div>
     }

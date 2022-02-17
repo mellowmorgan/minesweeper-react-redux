@@ -25,16 +25,18 @@ function Grid(props){
     <React.Fragment>
       <div style={getGridStyle(props.grid.length)}>
         {props.grid.map((row) => {
-          return row.map((cell)=> {return <Cell leftClickHandler={props.leftClickHandler} rightClickHandler={props.rightClickHandler} cell={cell} />});
+          return row.map((cell)=> {return <Cell gameOver={props.gameOver} leftClickHandler={props.leftClickHandler} rightClickHandler={props.rightClickHandler}  cell={cell} />});
         })}
       </div>
     </React.Fragment>
   );
 }
 Grid.propTypes = {
+  gameOver: PropTypes.bool,
   grid: PropTypes.array,
   rightClickHandler: PropTypes.func,
   leftClickHandler: PropTypes.func,
+  
 
 }
 export default Grid;

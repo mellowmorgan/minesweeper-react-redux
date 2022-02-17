@@ -3,7 +3,9 @@ export default (state = {}, action) => {
   
   switch (action.type) {
   case 'START_GAME': //preset grid size 16x16 mineCount 40
+  console.log("in start game reducer")
     return Object.assign({}, state, {
+        flagsCount:0,
         w: w,
         h: h,
         mineCount:mineCount,
@@ -21,18 +23,27 @@ export default (state = {}, action) => {
         }))
     });
   case 'TOGGLE_FLAG':
-    let selectedCell = state.grid[y][x];
-    selectedCell.flagged = !selectedCell.flagged;
-    state.grid[y][x] = selectedCell;
-    return state;
+    if (!state.grid[y][x].revealed && state.minesPlaced) {
+      if (!state.grid[y][x].flagged) {
+        state.flagsCount++;
+      } else {
+        state.flagsCount--;
+      }
+      let selectedCell = state.grid[y][x];
+      selectedCell.flagged = !selectedCell.flagged;
+      state.grid[y][x] = selectedCell;
+      return Object.assign({}, state);
+    } else {
+      return state;
+    }
   case 'PLACE_MINES':
     const minesArray = placeMines(cellToIgnore, mineCount, w, h);
+    let foundFirstClickedNumber;
     return Object.assign({}, state, {
       minesPlacedArray: minesArray,
       minesPlaced: true,
       grid: range(h).map((y) => range(w).map((x) => { 
          let thisCell = `cell-${x}-${y}`;
-         //if cell exists and if cell is adjacnt to a mine in mineArray then number is ++ isAdjacent(minesArray, cellx,celly)
           if (minesArray.includes(thisCell)) {
       
           return {
@@ -40,10 +51,12 @@ export default (state = {}, action) => {
             x, y,
             flagged: false,
             mine: true,
-            revealed: false
+            revealed: false,
+            number: ""
           };
         } else {
           const num = countAdjacentMines(minesArray, x, y)
+          //id of first clicked
           return {
             id: `cell-${x}-${y}`,
             x, y,
@@ -53,31 +66,34 @@ export default (state = {}, action) => {
             revealed: false
           };
         }
+        
     }))
 
   });
   case 'CELL_CLICKED':
-    return Object.assign({}, state, {
-      revealed: true
-    });
-  case 'REFRESH_GAME':
-    return Object.assign({}, state, {
-      lost:false,
-      won:false,
-      mineCount: mineCount,
-      w: w,
-      h:h,
-      minesPlaced: false,
-      grid: range(h).map((y) => range(w).map((x) => { 
-        return {
-          id: `cell-${x}-${y}`,
-          x, y,
-          flagged: false,
-          mine: false,
-          revealed: false
-        };
-      }))
-    })
+    // let clickedCell = state.grid[y][x];
+    // clickedCell.revealed = true;
+    // state.grid[y][x] = clickedCell;
+    const newState = clickHelper(state, x, y);
+    return Object.assign({}, state, newState);
+  // case 'REFRESH_GAME':
+  //   return Object.assign({}, state, {
+  //     lost:false,
+  //     won:false,
+  //     mineCount: mineCount,
+  //     w: w,
+  //     h:h,
+  //     minesPlaced: false,
+  //     grid: range(h).map((y) => range(w).map((x) => { 
+  //       return {
+  //         id: `cell-${x}-${y}`,
+  //         x, y,
+  //         flagged: false,
+  //         mine: false,
+  //         revealed: false
+  //       };
+  //     }))
+  //   })
   case 'GAME_OVER':
     return Object.assign({}, state, {
       lost:true
@@ -87,6 +103,49 @@ export default (state = {}, action) => {
   }
 };
 
+function clickHelper(state, x, y) {
+  let clickedCell = state.grid[y][x];
+  clickedCell.revealed = true;
+  state.grid[y][x] = clickedCell;
+  if (state.grid[y][x].number === 0) {
+    const neighbors = getNeighbors(x, y, state); 
+    neighbors.forEach((neighbor) => {
+      if (!neighbor.mine && !neighbor.revealed) {
+        clickHelper(state, neighbor.x, neighbor.y);
+      }
+    })
+  }
+  return state;
+}
+
+function getNeighbors(x, y, state) {
+  let neighbors = [];
+  if (x !== 0) {
+    neighbors.push(state.grid[y][x - 1]); //left
+    if (y !== 0) {
+      neighbors.push(state.grid[y-1][x-1]); //down, left
+    }
+    if (y !== state.h - 1) {
+      neighbors.push(state.grid[y + 1][x - 1]); //up, left
+    }
+  }
+  if (x !== state.w - 1) {
+    neighbors.push(state.grid[y][x + 1]); //right
+    if (y !== 0) {
+      neighbors.push(state.grid[y-1][x + 1]); //down, right
+    }
+    if (y !== state.h - 1) {
+      neighbors.push(state.grid[y + 1][x + 1]); //up, right
+    }
+  }
+  if (y !== 0) {
+    neighbors.push(state.grid[y - 1][x]); //down
+  }
+  if (y !== state.h - 1) {
+    neighbors.push(state.grid[y + 1][x]); //up
+  }
+  return neighbors;
+}
 
 function countAdjacentMines(mineArr, cellX, cellY){
   let adjacentCounter=0;
@@ -108,7 +167,7 @@ function placeMines(cellToIgnore, mineCount, w, h) {
   do {
     let x = Math.floor(Math.random()* h);
     let y = Math.floor(Math.random()* w);
-      if (`cell-${x}-${y}` != cellToIgnore.id && !mineArray.includes([y, x])) {
+      if (`cell-${x}-${y}` !== cellToIgnore.id && !mineArray.includes([y, x])) {
         // mineArray.push([y, x]);
         mineArray.push(`cell-${x}-${y}`);
       }
